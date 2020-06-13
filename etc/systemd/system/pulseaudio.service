@@ -1,0 +1,16 @@
+# systemd service for pulseaudio running in system mode
+# start with: systemctl start pulseaudio.service
+# enable on boot: systemctl enable pulseaudio.service
+[Unit]
+Description=Pulseaudio sound server
+After=avahi-daemon.service network.target
+ 
+[Service]
+Type=forking
+ExecStart=/usr/bin/pulseaudio --realtime --no-cpu-limit --system --disallow-exit --daemonize
+KillMode=process
+ExecReload=/bin/pkill pulseaudio
+
+ 
+[Install]
+WantedBy=multi-user.target
