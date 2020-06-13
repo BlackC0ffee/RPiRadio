@@ -2,7 +2,7 @@
 
 Turn up the sound with a small Headless Raspberry Pi Internet receiver using a Bluetooth speaker
 
-This is an abstract explanation  of the project more information can be found [on my blog](https://blog.stijn-dhaese.be/2020/05/rpiradio/)
+This is an abstract explanation  of the project more information can be found [on my blog](https://blog.stijn-dhaese.be/2020/06/rpiradio/)
 
 ## Install Software
 
