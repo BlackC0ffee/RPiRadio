@@ -19,17 +19,13 @@ def button_callback(channel):
         RestartMPD()
 
 def ConnectToBTSpeaker():
-    #Attempt 1
-    client_sock = bluetooth.BluetoothSocket(bluetooth.RFCOMM)
-    client_sock.setblocking(True)
-    try:
-        client_sock.connect((btMac, port))
+    #Attempt 2
+    bluetoothctl("connect", btMac)
 
-        print(str(btMac) + " Connected")
-        return True
-    except bluetooth.btcommon.BluetoothError:
-        print("Unable to connect to " + str(btMac))
-        return False 
+    #Attempt 3
+    #subprocess.call('bluetoothctl')
+    #subprocess.call('connect 88:C6:26:50:81:A0')
+
 
 
 
