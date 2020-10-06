@@ -1,8 +1,12 @@
 #!/usr/bin/python3
 import RPi.GPIO as GPIO
 import time
+import sys
+# the mock-0.3.1 dir contains testcase.py, testutils.py & mock.py
+sys.path.append('/home/pi/Python/RPiRadio/usr/local/lib/python3.7/dist-packages/')
+import HD44780
 
-#Resources: http://site2241.net/november2014.htm, https://www.raspberrypi-spy.co.uk/2012/07/16x2-lcd-module-control-using-python/
+#Resources: http://site2241.net/november2014.htm, https://www.raspberrypi-spy.co.uk/2012/07/16x2-lcd-module-control-using-python/, https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
 
 LCD_RS=7 #Register, 0 = command; 1 = Data
 #LCD_RW= #Register, 0 = Write; 1 = Read
@@ -40,11 +44,13 @@ def initLCD():
                         |└ 1 = Cursor on, 0 = cursor off
                         └ 1 = Display on, 0 = display off """
     send_command(0b00000001) #Display clear
-    time.sleep(1)
+    #time.sleep(1)
     send_command(0b00000110) #Entry mode
-    time.sleep(1)                
-    send_command(0b00010100) #Left shift
+    #time.sleep(1)                
+    #send_command(0b00010100) #Left shift
 
+    #send_command(0b10000101) #Move Cursor to position 5 (0x05) DDRAM
+    time.sleep(5)
     send_string("Hello World! Lets Party like it is 1999! But Don't forget, pigs can fly.")
 
     pass
@@ -70,18 +76,18 @@ def bit_query(input,bin_q):
 def send_string(string):
     for c in string:
         send_data(ord(c))
+        global LCD_Cursor
+        LCD_Cursor += 1
+        if LCD_Cursor == 16: #move to second line
+            LCD_Cursor = 40
+            send_command(0b11000000)
+        if LCD_Cursor == 56:
+            LCD_Cursor = 0
+            send_command(0b10000000)
     pass
 
 def send_data(i):
     send_command(i,1)
-    
-    pass
-
-def read_register(Pin):
-    if GPIO.input(Pin) == 1:
-        return "i"
-    else:
-        return "o"
     pass
 
 def send_command(i, isData=0):
@@ -94,26 +100,11 @@ def send_command(i, isData=0):
     GPIO.output(LCD_DB7, 1) if bit_query(i, 0b10000000) else GPIO.output(LCD_DB7, 0)
     enable()
 
-    a = read_register(LCD_DB4)
-    a = read_register(LCD_DB5) + a
-    a = read_register(LCD_DB6) + a
-    a = read_register(LCD_DB7) + a
-
     GPIO.output(LCD_DB4, 1) if bit_query(i, 0b00000001) else GPIO.output(LCD_DB4, 0)
     GPIO.output(LCD_DB5, 1) if bit_query(i, 0b00000010) else GPIO.output(LCD_DB5, 0)
     GPIO.output(LCD_DB6, 1) if bit_query(i, 0b00000100) else GPIO.output(LCD_DB6, 0)
     GPIO.output(LCD_DB7, 1) if bit_query(i, 0b00001000) else GPIO.output(LCD_DB7, 0)
     enable()
-
-    b = read_register(LCD_DB4)
-    b = read_register(LCD_DB5) + b
-    b = read_register(LCD_DB6) + b
-    b = read_register(LCD_DB7) + b
-
-    print(bin(i))
-    print(a + b)
-
-    
     pass
 
 def enable(ms=0.005):
@@ -130,7 +121,11 @@ def final():
 
 if __name__ == "__main__":
     
-    setup()
+    lcd = HD44780.LCD()
+    lcd.send_string("Hello World! Lets Party like it is 1999! But Don't forget, pigs can fly.")
+    
+
+    #HD44780.send_string("Hallo")
     time.sleep(15)
-    final()
+    #final()
     pass
