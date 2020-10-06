@@ -4,6 +4,7 @@ import time
 class LCD():  
 
     #Resources: http://site2241.net/november2014.htm, https://www.raspberrypi-spy.co.uk/2012/07/16x2-lcd-module-control-using-python/, https://www.sparkfun.com/datasheets/LCD/HD44780.pdf
+    #Sure there are multiple HD44780 drivers on the interwebz, but this one has bitmask and other cool stuff
 
     def __setup(self):
         GPIO.setmode(GPIO.BCM)
@@ -18,8 +19,7 @@ class LCD():
         pass
 
     def initLCD(self):
-        #page 46 > HD44780U (LCD-II)
-        
+        #page 46 > HD44780U (LCD-II)        
         self.__send_command(0b00110011) #init signal
         self.__send_command(0b00110010) #init signal + start config
         self.__send_command(0b00101000) #Config lines and dot size
@@ -32,10 +32,6 @@ class LCD():
                             └ 1 = Display on, 0 = display off """
         self.__send_command(0b00000001) #Display clear
         self.__send_command(0b00000110) #Entry mode
-        #send_command(0b00010100) #Left shift
-        #send_command(0b10000101) #Move Cursor to position 5 (0x05) DDRAM
-        #time.sleep(5)
-        #send_string("Hello World! Lets Party like it is 1999! But Don't forget, pigs can fly.")
         pass
 
     def __bit_query(self, input, bin_q):
@@ -80,16 +76,16 @@ class LCD():
         GPIO.output(self.LCD_DB5, 1) if self.__bit_query(i, 0b00100000) else GPIO.output(self.LCD_DB5, 0)
         GPIO.output(self.LCD_DB6, 1) if self.__bit_query(i, 0b01000000) else GPIO.output(self.LCD_DB6, 0)
         GPIO.output(self.LCD_DB7, 1) if self.__bit_query(i, 0b10000000) else GPIO.output(self.LCD_DB7, 0)
-        self.enable()
+        self.__enable()
 
         GPIO.output(self.LCD_DB4, 1) if self.__bit_query(i, 0b00000001) else GPIO.output(self.LCD_DB4, 0)
         GPIO.output(self.LCD_DB5, 1) if self.__bit_query(i, 0b00000010) else GPIO.output(self.LCD_DB5, 0)
         GPIO.output(self.LCD_DB6, 1) if self.__bit_query(i, 0b00000100) else GPIO.output(self.LCD_DB6, 0)
         GPIO.output(self.LCD_DB7, 1) if self.__bit_query(i, 0b00001000) else GPIO.output(self.LCD_DB7, 0)
-        self.enable()
+        self.__enable()
         pass
 
-    def enable(self, ms=0.005):
+    def __enable(self, ms=0.005):
         time.sleep(ms)
         GPIO.output(self.LCD_E, 1)
         time.sleep(ms)
@@ -97,16 +93,12 @@ class LCD():
         time.sleep(ms)
         pass
 
-    def final():
-        GPIO.cleanup()
-        pass
-
     def __init__(self, LCD_RS=7, LCD_E=8, LCD_DB4=25, LCD_DB5=24, LCD_DB6=23, LCD_DB7=18):
 
         self.LCD_RS=LCD_RS #Register, 0 = command; 1 = Data
-        #LCD_RW= #Register, 0 = Write; 1 = Read
+        #LCD_RW= #Register, 0 = Write; 1 = Read #TODO or not TODO, that is the question.
         self.LCD_E=LCD_E #enable pin
-        #Skipping DB 0-3 because 4 bit mode
+        #Skipping DB 0-3 because 4 bit mode #TODO Make it 4/8 bit with inheritence.
         self.LCD_DB4=LCD_DB4
         self.LCD_DB5=LCD_DB5
         self.LCD_DB6=LCD_DB6
