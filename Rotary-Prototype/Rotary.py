@@ -13,19 +13,15 @@ def setup():
     GPIO.setup(ROT_A, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(ROT_B, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-    GPIO.add_event_detect(ROT_A, GPIO.RISING, callback=roteryIRQ, bouncetime=200)
+    GPIO.add_event_detect(ROT_A, GPIO.RISING, callback=roteryIRQ)
     pass
 
 def roteryIRQ(channel):
-    
-    rota = "Low"
-    rotb = "Low"
 
-    if GPIO.input(ROT_A):
-        rota = "High"
-    if GPIO.input(ROT_B):
-        rotb = "High"
-    print("A: " + rota + ", B: " + rotb)
+    if GPIO.input(ROT_A)==GPIO.input(ROT_B):
+        print("Left")
+    else:
+        print("Right")
     pass
 
 if __name__ == "__main__":
