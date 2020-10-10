@@ -32,8 +32,8 @@ class Event(object):
             eventhandler(*args, **keywargs)
 
 class lcd(object):
-    def data(self, txt):
-        print(txt)
+    def data(self, object):
+        print(object)
         pass
     pass
 
@@ -48,6 +48,14 @@ class Rotary(object):
         self.__setup()
         pass
 
+    def __str__(self):
+        return str(self.__ROT_Counter)
+        pass
+
+    def addSubscriber(self,objMethod): 
+        self.OnChange += objMethod
+        pass
+
     def __setup(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.__ROT_A, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -60,24 +68,29 @@ class Rotary(object):
             self.__ROT_Bounce -= 1 #Move left detected
         else:
             self.__ROT_Bounce += 1 #Move right detected
-        self.CheckBounce()
-        print(self.__ROT_Counter)
+        
+        if self.CheckBounce():
+            self.OnChange(self)
         pass
 
     def CheckBounce(self): #This prevents false positives
         if self.__ROT_Bounce == self.__ROT_Tolerance:
             self.__ROT_Counter += 1 #Move counter up/right
             self.__ROT_Bounce = 0 # Reset our bounce
+            return True
 
         if self.__ROT_Bounce == -self.__ROT_Tolerance:
             self.__ROT_Counter -= 1 #Move counter up/right
             self.__ROT_Bounce = 0 # Reset our bounce
-        pass
+            return True
+        return False
     pass
 
 if __name__ == "__main__":
     try:
         t=Rotary(ROT_A, ROT_B)
+        a=lcd()
+        t.addSubscriber(a.data)
         while True:
             pass
     except KeyboardInterrupt:
