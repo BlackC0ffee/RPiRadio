@@ -1,46 +1,45 @@
 #!/usr/bin/env python3
 import RPi.GPIO as GPIO
-import bluetooth
+#import bluetooth
 import time
-import dbus
+#import dbus
 import os
-import subprocess
+#import subprocess
 from sh import bluetoothctl
 
-pin = 15
+ConnectPin = 15
 PowerOffPin = 3
 btMac= "FC:58:FA:82:B0:EC"
 btMac= "88:C6:26:50:81:A0"
 port = 1
 
-def button_callback(channel):
+def connect(channel):
     print("button pushed " + str(channel))
-    if ConnectToBTSpeaker():
+    if connectToBTSpeaker():
         time.sleep(10)
-        RestartMPD()
+        restartMPD()
 
-def ConnectToBTSpeaker():
-    #Attempt 2
+def connectToBTSpeaker():
     bluetoothctl("connect", btMac)
     return True
 
-def RestartMPD():
+def restartMPD():
     print("Restarting MPD")
     os.system("sudo systemctl restart mpd.service")
     pass
 
-def ShutdownRpi(channel): #Based on https://scribles.net/adding-power-switch-on-raspberry-pi/
+def shutdownRpi(channel): #Based on https://scribles.net/adding-power-switch-on-raspberry-pi/
     print("Shutdown Rpi, goodnight")
     os.system("sudo shutdown -h now")
     pass
 
 if __name__ == '__main__':
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-    GPIO.add_event_detect(pin,GPIO.RISING,callback=button_callback,bouncetime=1000) #High bouncetime because this button is not Hulk-proof
+    GPIO.setup(ConnectPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.add_event_detect(ConnectPin,GPIO.RISING,callback=connect,bouncetime=1000) #High bouncetime because this button is not Hulk-proof
     
     GPIO.setup(PowerOffPin, GPIO.IN)
-    GPIO.add_event_detect(PowerOffPin,GPIO.RISING,callback=ShutdownRpi,bouncetime=1000)
+    GPIO.add_event_detect(PowerOffPin,GPIO.RISING,callback=shutdownRpi,bouncetime=1000)
 
     try:
         while True:
@@ -48,4 +47,3 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         GPIO.cleanup()
-
