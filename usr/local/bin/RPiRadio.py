@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 import RPi.GPIO as GPIO
-#import bluetooth
 import time
-#import dbus
 import os
-#import subprocess
 from sh import bluetoothctl
 
 ConnectPin = 15
 PowerOffPin = 3
-btMac= "FC:58:FA:82:B0:EC"
-btMac= "88:C6:26:50:81:A0"
-port = 1
+btMac= "" #Enter BT address of speaker
 
 def connect(channel):
     print("button pushed " + str(channel))
