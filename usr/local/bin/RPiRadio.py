@@ -5,7 +5,7 @@ import os
 from sh import bluetoothctl
 
 ConnectPin = 15
-PowerOffPin = 3
+PowerOffPin = 4
 btMac= "" #Enter BT address of speaker
 
 def connect(channel):
