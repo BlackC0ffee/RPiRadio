@@ -15,7 +15,7 @@ def connect(channel):
         restartMPD()
 
 def connectToBTSpeaker():
-    print("Attempting to connect to BT-speaker)
+    print("Attempting to connect to BT-speaker")
     bluetoothctl("connect", btMac)
     return True
 
