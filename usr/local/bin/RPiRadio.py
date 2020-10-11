@@ -5,7 +5,7 @@ import os
 from sh import bluetoothctl
 
 ConnectPin = 15
-PowerOffPin = 3 #Only pin 3 can power
+PowerOffPin = 3 #Only pin 3 can power RPi on, but has a hard-wired Pull-Up resitor (This means the pin need to be connected to ground.)
 btMac= "" #Enter BT address of speaker
 
 def connect(channel):
