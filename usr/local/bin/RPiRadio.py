@@ -5,7 +5,7 @@ import os
 from sh import bluetoothctl
 
 ConnectPin = 15
-PowerOffPin = 4
+PowerOffPin = 3 #Only pin 3 can power
 btMac= "" #Enter BT address of speaker
 
 def connect(channel):
@@ -30,10 +30,10 @@ def shutdownRpi(channel): #Based on https://scribles.net/adding-power-switch-on-
 
 if __name__ == '__main__':
     GPIO.setmode(GPIO.BCM)
-    GPIO.setup(ConnectPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(ConnectPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN) #3.3v -> Button -> 10kΩ -> ConnectPin 
     GPIO.add_event_detect(ConnectPin,GPIO.RISING,callback=connect,bouncetime=1000) #High bouncetime because this button is not Hulk-proof
     
-    GPIO.setup(PowerOffPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+    GPIO.setup(PowerOffPin, GPIO.IN) #GND -> Button -> 10kΩ -> PowerOffPin
     GPIO.add_event_detect(PowerOffPin,GPIO.RISING,callback=shutdownRpi,bouncetime=1000)
 
     try:
